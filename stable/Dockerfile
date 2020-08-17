@@ -1,11 +1,14 @@
-ARG GIT_TAG="v0.15.4"
-ARG BAT_VERSION="${GIT_TAG}"
+ARG SOURCE
+ARG REVISION
+ARG CREATED
+ARG VERSION
+ARG GIT_REF="${VERSION}"
 
 FROM westonsteimel/rust-static-builder:stable as builder
 
-ARG GIT_TAG
+ARG GIT_REF
 
-RUN git clone --depth 1 --branch "${GIT_TAG}" https://github.com/sharkdp/bat /build/bat \
+RUN git clone --depth 1 --branch "${GIT_REF}" https://github.com/sharkdp/bat /build/bat \
     && cd /build/bat \
     && NOCOMPRESS=1 /home/builder/build.sh
 
@@ -16,7 +19,10 @@ RUN addgroup bat \
 
 FROM scratch
 
-ARG BAT_VERSION
+ARG VERSION
+ARG SOURCE
+ARG REVISION
+ARG CREATED
 
 COPY --from=config /etc/passwd /etc/passwd
 COPY --from=builder /build/bat/target/x86_64-unknown-linux-musl/release/bat /usr/local/bin/bat
@@ -30,6 +36,8 @@ CMD ["--help"]
 
 LABEL org.opencontainers.image.title="bat" \
     org.opencontainers.image.description="bat in Docker" \
-    org.opencontainers.image.version="${BAT_VERSION}" \
-    version="${BAT_VERSION}"
+    org.opencontainers.image.source="${SOURCE}" \
+    org.opencontainers.image.revision="${REVISION}" \
+    org.opencontainers.image.created="${CREATED}" \
+    org.opencontainers.image.version="${VERSION}"
 
