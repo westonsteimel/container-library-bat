@@ -8,6 +8,12 @@ FROM westonsteimel/rust-static-builder:nightly as builder
 
 ARG GIT_REF
 
+USER root
+RUN /sbin/apk add --no-cache libgit2-dev
+
+USER builder
+ENV LIBGIT2_SYS_USE_PKG_CONFIG 1
+
 RUN git clone --depth 1 --branch "${GIT_REF}" https://github.com/sharkdp/bat /build/bat \
     && cd /build/bat \
     && mkdir /build/output \
