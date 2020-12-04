@@ -10,7 +10,9 @@ ARG GIT_REF
 
 RUN git clone --depth 1 --branch "${GIT_REF}" https://github.com/sharkdp/bat /build/bat \
     && cd /build/bat \
-    && NOCOMPRESS=1 /home/builder/build.sh
+    && mkdir /build/output \
+    && NOCOMPRESS=1 /home/builder/build.sh \
+    && cp /build/bat/target/${TARGET}/release/bat /build/output/
 
 FROM alpine:edge as config
 
@@ -25,7 +27,7 @@ ARG REVISION
 ARG CREATED
 
 COPY --from=config /etc/passwd /etc/passwd
-COPY --from=builder /build/bat/target/x86_64-unknown-linux-musl/release/bat /usr/local/bin/bat
+COPY --from=builder /build/output/bat /usr/local/bin/bat
 
 USER bat
 
