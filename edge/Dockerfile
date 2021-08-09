@@ -1,15 +1,14 @@
-ARG SOURCE
-ARG REVISION
-ARG CREATED
-ARG VERSION
-ARG GIT_REF="${VERSION}"
+ARG VERSION="master"
+ARG REVISION="89217e0d58a9a371540d11eded538721d71c90c7"
 
 FROM westonsteimel/rust-static-builder:stable as builder
 
-ARG GIT_REF
+ARG VERSION
+ARG REVISION
 
-RUN git clone --depth 1 --branch "${GIT_REF}" https://github.com/sharkdp/bat /build/bat \
+RUN git clone --branch "${VERSION}" https://github.com/sharkdp/bat /build/bat \
     && cd /build/bat \
+    && git reset --hard "${REVISION}" \
     && mkdir /build/output \
     && NOCOMPRESS=1 /home/builder/build.sh \
     && cp /build/bat/target/${TARGET}/release/bat /build/output/
@@ -22,24 +21,22 @@ RUN addgroup bat \
 FROM scratch
 
 ARG VERSION
-ARG SOURCE
 ARG REVISION
-ARG CREATED
+ENV BAT_VERSION="${VERSION}" \
+    BAT_REVISION="${REVISION}" \
+    TERM="xterm-256color"
+
 
 COPY --from=config /etc/passwd /etc/passwd
 COPY --from=builder /build/output/bat /usr/local/bin/bat
 
 USER bat
 
-ENV TERM xterm-256color
-
 ENTRYPOINT ["/usr/local/bin/bat"]
 CMD ["--help"]
 
 LABEL org.opencontainers.image.title="bat" \
     org.opencontainers.image.description="bat in Docker" \
-    org.opencontainers.image.source="${SOURCE}" \
     org.opencontainers.image.revision="${REVISION}" \
-    org.opencontainers.image.created="${CREATED}" \
     org.opencontainers.image.version="${VERSION}"
 
