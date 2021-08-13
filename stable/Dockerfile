@@ -9,9 +9,7 @@ ARG REVISION
 RUN git clone --branch "v${VERSION}" https://github.com/sharkdp/bat /build/bat \
     && cd /build/bat \
     && git reset --hard "${REVISION}" \
-    && mkdir /build/output \
-    && NOCOMPRESS=1 /home/builder/build.sh \
-    && cp /build/bat/target/${TARGET}/release/bat /build/output/
+    && NOCOMPRESS=1 /home/builder/build.sh
 
 FROM alpine:edge as config
 
@@ -28,7 +26,7 @@ ENV BAT_VERSION="${VERSION}" \
 
 
 COPY --from=config /etc/passwd /etc/passwd
-COPY --from=builder /build/output/bat /usr/local/bin/bat
+COPY --from=builder /build/artifacts/bat /usr/local/bin/bat
 
 USER bat
 
