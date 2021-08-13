@@ -1,7 +1,7 @@
 ARG VERSION="0.18.2"
 ARG REVISION="589df6792fe406f91b00db5e24d35393c6527e6b"
 
-FROM westonsteimel/rust-static-builder:stable as builder
+FROM ghcr.io/westonsteimel/rust-static-builder:stable as builder
 
 ARG VERSION
 ARG REVISION

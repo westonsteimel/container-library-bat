@@ -1,7 +1,7 @@
 ARG VERSION="master"
 ARG REVISION="f8498b260b0dc82e12e0486dcb2d86d039cac54e"
 
-FROM westonsteimel/rust-static-builder:stable as builder
+FROM ghcr.io/westonsteimel/rust-static-builder:stable as builder
 
 ARG VERSION
 ARG REVISION
