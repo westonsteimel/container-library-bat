@@ -16,7 +16,7 @@ RUN apk update && apk add --no-cache \
 RUN git clone --branch "v${VERSION}" https://github.com/sharkdp/bat /build/bat \
     && cd /build/bat \
     && git reset --hard "${REVISION}" \
-    && CARGO_TARGET_DIR=/build/artifacts/ RUSTFLAGS='-C link-arg=-s' cargo build --release --bins
+    && RUSTFLAGS='-C link-arg=-s' cargo build --release --bins --target-dir /build
 
 FROM alpine:edge as config
 
@@ -33,7 +33,7 @@ ENV BAT_VERSION="${VERSION}" \
 
 
 COPY --from=config /etc/passwd /etc/passwd
-COPY --from=builder /build/artifacts/bat /usr/local/bin/bat
+COPY --from=builder /build/release/bat /usr/local/bin/bat
 
 USER bat
 
