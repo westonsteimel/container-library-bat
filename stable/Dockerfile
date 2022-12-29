@@ -1,15 +1,22 @@
 ARG VERSION="null"
 ARG REVISION="null"
 
-FROM ghcr.io/westonsteimel/rust-static-builder:stable as builder
+FROM docker.io/rust:alpine as builder
 
 ARG VERSION
 ARG REVISION
 
+RUN apk update && apk add --no-cache \
+    git \
+    ca-certificates \
+    build-base \
+    musl-utils \
+    musl-dev
+
 RUN git clone --branch "v${VERSION}" https://github.com/sharkdp/bat /build/bat \
     && cd /build/bat \
     && git reset --hard "${REVISION}" \
-    && NOCOMPRESS=1 /home/builder/build.sh
+    && CARGO_TARGET_DIR=/build/artifacts/ RUSTFLAGS='-C link-arg=-s' cargo build --release --bins
 
 FROM alpine:edge as config
 
