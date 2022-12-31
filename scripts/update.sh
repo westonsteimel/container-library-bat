@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -xeuo pipefail
 
 version=$(curl --silent "https://api.github.com/repos/sharkdp/bat/releases/latest" | jq -e .tag_name | xargs)
 revision=$(curl --silent "https://api.github.com/repos/sharkdp/bat/commits/${version}" | jq -e .sha | xargs)
