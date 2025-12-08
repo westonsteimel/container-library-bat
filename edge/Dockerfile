@@ -1,5 +1,5 @@
 ARG VERSION="master"
-ARG REVISION="c74ca27075ffefda45036bee3ddb039379967847"
+ARG REVISION="4d188e45fec175039c78b63a96e6f486eb87c433"
 
 FROM docker.io/rust:alpine as builder
 
